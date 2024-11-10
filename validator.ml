@@ -1,10 +1,3 @@
-(*
-need to make sure:
-- value is >=1 and <= 9
-- it's unique its row
-- it's unique in its column
-- it's unique in its block
-*)
 
 (* sqrt with integer *)
 let isqrt (n : int) = 
@@ -58,6 +51,7 @@ let is_valid_board (b : int list list) (n: int) =
 
 
 
+(*
 let example_board = [
   [5; 3; 4; 6; 7; 8; 9; 1; 2];
   [6; 7; 2; 1; 9; 5; 3; 4; 8];
@@ -75,6 +69,7 @@ let () =
     print_endline "Valid"
   else
     print_endline "Invalid"
+*)
     
     
 
