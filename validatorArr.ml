@@ -19,19 +19,18 @@ let get_column board col n =
 let get_square board row col n =
   let row_start = (row / n) * n in
   let col_start = (col / n) * n in
-  let arr = Array.make (n * n) 0 in
+  let arr = Array.init (n * n) (fun _ -> 0) in
 
   (* loops through square, adding elements to the square array *)
-  let rec collect_square i j idx =
-    if i >= row_start + n then () (* out of rows *)
-    else if j >= col_start + n then collect_square (i + 1) col_start idx (* out of cols in row *)
+  let rec collect_square row_i col_i cur =
+    if row_i >= row_start + n then () (* out of rows *)
+    else if col_i >= col_start + n then collect_square (row_i + 1) col_start cur (* out of cols in row, move down *)
     else (
-      arr.(idx) <- Array.get (Array.get board i) j;
-      collect_square i (j + 1) (idx + 1)
+      arr.(cur) <- Array.get (Array.get board row_i) col_i; (* store value from cell in arr *)
+      collect_square row_i (col_i + 1) (cur + 1) (* step forward *)
     )
   in
-  collect_square row_start col_start 0;
-  arr
+  collect_square row_start col_start 0; arr
 
 
 let is_valid_board board n =
