@@ -32,8 +32,8 @@ let get_square board row col n =
   in
   collect_square row_start col_start 0; arr
 
-
-let is_valid_board board n =
+(* uses the row, column, and square getters to ensure properties hold for all of them *)
+let full_valid_board board n =
   let valid_rows = Array.for_all (fun row -> is_valid_list (get_row board row) n) (Array.init (n*n) (fun x -> x)) in
   let valid_columns = Array.for_all (fun col -> is_valid_list (get_column board col n) n) (Array.init (n*n) (fun x -> x)) in
   let valid_squares =
@@ -60,6 +60,6 @@ let () =
     [|3; 4; 5; 2; 8; 6; 1; 7; 9|];
   |] in
   let n = 3 in
-  match is_valid_board board n with
+  match full_valid_board board n with
   | true -> print_endline "Valid"
   | false -> print_endline "Invalid"

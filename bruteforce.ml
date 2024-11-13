@@ -23,7 +23,7 @@ let square_valid board row col value n =
   check start_row start_col
 
 (* checks if the added value follows board rules *)
-let board_valid board row col value n =
+let check_board_valid board row col value n =
   row_valid board row value &&
   col_valid board col value &&
   square_valid board row col value n
@@ -44,7 +44,7 @@ let rec solve board n = match find_empty board n with
   | Some (row, col) ->
       let rec try_value value =
         if value > n*n then None  (* no valid options, backtrack *)
-        else if board_valid board row col value n then (
+        else if check_board_valid board row col value n then (
           board.(row).(col) <- value;
           match solve board n with
           | Some solution -> Some solution  (* solution found *)
