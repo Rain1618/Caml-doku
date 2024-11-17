@@ -1,8 +1,8 @@
-# dune exec B
+# dune build
 # OCAMLPARAM: unset
 # Shared cache: disabled
 # Shared cache location: /home/rrr/.cache/dune/db
-# Workspace root: /home/rrr/Desktop/Caml-doku/B
+# Workspace root: /home/rrr/Desktop/Caml-doku
 # Auto-detected concurrency: 4
 # Dune context:
 #  { name = "default"
@@ -13,4 +13,3 @@
 #  ; build_dir = In_build_dir "default"
 #  ; instrument_with = []
 #  }
-$ /usr/bin/ocamlc.opt -config > /tmp/dune_f23e55_output
