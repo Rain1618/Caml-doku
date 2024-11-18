@@ -93,6 +93,7 @@ let rec solve (board : int array array) (n : int) : (int array array) option =
 
 
 (*** QUESTION 3: CONSTRAINT PROBLEM (ninja level) ***)
+(* types omitted as to not constrain the coder to Z3 *)
 
 (* TODO: Implement create_sudoku_grid *)
 let create_sudoku_grid ctx m =
