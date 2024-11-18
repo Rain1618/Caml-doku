@@ -1,6 +1,3 @@
-(* open Z3
-open Z3.Solver idk why we dont need the imports lol*)
-
 (*Refer to the following link for a description of all the Z3 functions used*)
 (*https://z3prover.github.io/api/html/ml/Z3.Z3Array.html*)
 
@@ -19,25 +16,23 @@ let create_sudoku_grid ctx m =
           Z3.Arithmetic.Integer.mk_const_s ctx
             (Printf.sprintf "x_%d_%d" (i + 1) (j + 1))));;
 
-(*TODO: string or integer representation?? choose which one is better, i did string rn butwe can change*)
 (*CONSTRAINT: for each cell, the digit i must satisfy 1<= i <= m *)
 let add_digit_constraints ctx m grid solver =
   let int_one = Z3.Arithmetic.Integer.mk_numeral_s ctx "1" in
   let int_m = Z3.Arithmetic.Integer.mk_numeral_s ctx (string_of_int m) in
   Array.iteri (fun _ row ->
       Array.iteri (fun _ cell ->
-          let lower_bound = Z3.Arithmetic.mk_ge ctx cell int_one in (*mk_ge : context -> Expr.expr -> Expr.expr -> Expr.expr Create an expression representing t1 >= t2*)
+          let lower_bound = Z3.Arithmetic.mk_ge ctx cell int_one in 
           let upper_bound = Z3.Arithmetic.mk_le ctx cell int_m in
-          let constraint_ = Z3.Boolean.mk_and ctx [lower_bound; upper_bound] in (* mk_and : context -> Expr.expr list -> Expr.expr*)
+          let constraint_ = Z3.Boolean.mk_and ctx [lower_bound; upper_bound] in 
           Z3.Solver.add solver [constraint_]
       ) row
   ) grid;;
 
-(*TODO: IS there clever way of using the same code for the following 3 constraints? maybe have one function that gets makes a list for each row/col/square and then reuse same mk_distinct function on that list?*)
 (*CONSTRAINT: Every element in a row must be distinct*)
 let add_distinct_row_constraint ctx m grid solver =
   for i = 0 to m - 1 do
-    let row = Array.to_list grid.(i) in 
+    let row = Array.to_list grid.(i) in  
     let constraint_ = Z3.Boolean.mk_distinct ctx row in
     Z3.Solver.add solver [constraint_]
   done
@@ -53,7 +48,7 @@ let add_distinct_col_constraint ctx m grid solver =
 (*CONSTRAINT: Every element in a nxn square must be distinct*)
 let add_distinct_square_constraint ctx m grid solver =
   let n = int_of_float (sqrt (float_of_int m)) in
-  for i0 = 0 to n - 1 do (*TODO: is a for loop the most ocamlian way of doing things?*)
+  for i0 = 0 to n - 1 do 
     for j0 = 0 to n - 1 do
       (* Collect all elements in square starting at (n * i0, n * j0) *)
       let square =
@@ -72,7 +67,7 @@ let add_distinct_square_constraint ctx m grid solver =
 let add_instance_constraints ctx grid solver instance =
   Array.iteri (fun i row ->
       Array.iteri (fun j value ->
-          if value <> 0 then (*value != 0 goofy ocaml syntax*)
+          if value <> 0 then 
             let cell_value = Z3.Arithmetic.Integer.mk_numeral_s ctx (string_of_int value) in
             let constraint_ = Z3.Boolean.mk_eq ctx grid.(i).(j) cell_value in
             Z3.Solver.add solver [constraint_]
@@ -116,19 +111,44 @@ let solve_sudoku ctx m instance =
           print_solution grid model  
       | None -> print_endline "No solution found in model")
   | Z3.Solver.UNSATISFIABLE -> print_endline "No solution"
-  | Z3.Solver.UNKNOWN -> print_endline "idk what unknown means lol"
+  | Z3.Solver.UNKNOWN -> print_endline "Unknown"
 
 (* Test *)
-(*TODO: find some famously hard sudokus and try them out*)
-let m = 4;;
+(* Measure execution time *)
+let time_execution f =
+  let start_time = Unix.gettimeofday () in
+  let result = f () in
+  let end_time = Unix.gettimeofday () in
+  let elapsed = end_time -. start_time in
+  Printf.printf "Execution time: %.6f seconds\n" elapsed;
+  result
 
+let m = 9;;
+
+(* let instance = [|
+  [|5; 3; 0; 0; 7; 0; 0; 0; 0|];
+  [|6; 0; 0; 1; 9; 5; 0; 0; 0|];
+  [|0; 9; 8; 0; 0; 0; 0; 6; 0|];
+  [|8; 0; 0; 0; 6; 0; 0; 0; 3|];
+  [|4; 0; 0; 8; 0; 3; 0; 0; 1|];
+  [|7; 0; 0; 0; 2; 0; 0; 0; 6|];
+  [|0; 6; 0; 0; 0; 0; 2; 8; 0|];
+  [|0; 0; 0; 4; 1; 9; 0; 0; 5|];
+  [|0; 0; 0; 0; 8; 0; 0; 7; 9|];
+|] *)
+(*Arto Inkala's famously hard sudoku*)
 let instance = [|
-  [|0;0;0;4|];
-  [|0;3;0;0|];
-  [|0;0;4;0|];
-  [|2;0;0;0|];
+  [|8; 0; 0; 0; 0; 0; 0; 0; 0|];
+  [|0; 0; 3; 6; 0; 0; 0; 0; 0|];
+  [|0; 7; 0; 0; 9; 0; 2; 0; 0|];
+  [|0; 5; 0; 0; 0; 7; 0; 0; 0|];
+  [|0; 0; 0; 0; 4; 5; 7; 0; 0|];
+  [|0; 0; 0; 1; 0; 0; 0; 3; 0|];
+  [|0; 0; 1; 0; 0; 0; 0; 6; 8|];
+  [|0; 0; 8; 5; 0; 0; 0; 1; 0|];
+  [|0; 9; 0; 0; 0; 0; 4; 0; 0|];
 |]
 
 let () =
   let ctx = Z3.mk_context [] in
-  solve_sudoku ctx m instance
+  time_execution (fun () -> solve_sudoku ctx m instance);
