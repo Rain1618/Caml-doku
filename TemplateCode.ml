@@ -4,13 +4,13 @@ exception NotImplemented
 type board = int array array
 
 (* FOR Q1 *)
-let is_valid_list (arr : int array) (n : int) =
+let is_valid_list (arr : int array) (n : int) : bool =
   let arr_copy = Array.copy arr in 
   Array.sort compare arr_copy;  (* sort copy in-place *)
   arr_copy = Array.init (n * n) (fun i -> i + 1)  (* compare sorted array with what it should be *)
 
 (* FOR Q2 *)
-let print_board (board : int array array) =
+let print_board (board : int array array) : _ =
   Array.iter (fun row ->
     Array.iter (fun cell ->
       Printf.printf "%d " cell
@@ -47,19 +47,19 @@ let print_solution grid model =
 (*** QUESTION 1: VALDIATOR ***)
 
 (* TODO: Implement get_row *)
-let get_row (board : int array array) (row : int array) =
+let get_row (board : int array array) (row : int array) : int array =
   raise NotImplemented
 
 (* TODO: Implement get_column *)
-let get_column (board : int array array) (col : int array) (n : int) =
+let get_column (board : int array array) (col : int array) (n : int) : int array =
   raise NotImplemented
 
 (* TODO: Implement get_square *)
-let get_square (board : int array array) (row : int array) (col : int array) (n : int) =
+let get_square (board : int array array) (row : int array) (col : int array) (n : int) : int array =
   raise NotImplemented
 
 (* TODO: Implement is_valid_board *)
-let full_valid_board (board : int array array) (n : int) =
+let full_valid_board (board : int array array) (n : int) : bool =
   raise NotImplemented
 
 
@@ -67,27 +67,27 @@ let full_valid_board (board : int array array) (n : int) =
 (*** QUESTION 2: BRUTE FORCE SOLVER ***)
 
 (* TODO: Implement row_valid *)
-let row_valid (board : int array array) (row : int array) (value : int) =
+let row_valid (board : int array array) (row : int array) (value : int) : bool =
   raise NotImplemented
 
 (* TODO: Implement col_valid *)
-let col_valid (board : int array array) (col : int array) (value : int) =
+let col_valid (board : int array array) (col : int array) (value : int) : bool =
   raise NotImplemented
 
 (* TODO: Implement square_valid *)
-let square_valid (board : int array array) (row : int array) (col : int array) (value : int) (n : int) =
+let square_valid (board : int array array) (row : int array) (col : int array) (value : int) (n : int) : bool =
   raise NotImplemented
 
 (* TODO: Implement board_valid *)
-let check_board_valid (board : int array array) (row : int array) (col : int array) (value : int) (n : int) =
+let check_board_valid (board : int array array) (row : int array) (col : int array) (value : int) (n : int) : bool =
   raise NotImplemented
 
 (* TODO: Implement find_empty *)
-let find_empty (board : int array array) (n : int) =
+let find_empty (board : int array array) (n : int) : (int * int) option =
   raise NotImplemented
 
 (* TODO: Implement solve *)
-let rec solve (board : int array array) (n : int) =
+let rec solve (board : int array array) (n : int) : (int array array) option =
   raise NotImplemented
 
 
