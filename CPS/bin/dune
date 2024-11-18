@@ -1,0 +1,4 @@
+(executable
+ (public_name CPS)
+ (name main)
+ (libraries z3))

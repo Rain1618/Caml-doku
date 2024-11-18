@@ -1,4 +1,4 @@
 (lang dune 3.16)
 (name B)
 (sections (lib .) (bin ../../bin))
-(files (lib (META dune-package opam)) (bin (B)))
+(files (lib (META dune-package opam)) (bin (CPS)))
