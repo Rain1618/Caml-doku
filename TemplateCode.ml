@@ -1,7 +1,6 @@
 exception NotImplemented 
 
 (*** HELPERS ***)
-
 type board = int array array
 
 (* FOR Q1 *)
@@ -19,7 +18,30 @@ let print_board board =
     print_newline ()
   ) board
 
+(* FOR Q3 *)
 
+(*
+**Uncomment the following when running the code with Z3 installed:**
+
+let create_solver ctx =
+  let solver = Z3.Solver.mk_solver ctx None in
+  solver
+
+let print_solution grid model =
+    Array.iter (fun row ->
+      Array.iter (fun cell ->
+          (* get value of each cell*)
+          let eval_result = Z3.Model.eval model cell true in
+          match eval_result with
+          | Some expr ->
+              let value = Z3.Expr.to_string expr in
+              Printf.printf "%s " value
+          | None ->
+              Printf.printf "0 "  
+      ) row;
+      Printf.printf "\n"  
+  ) grid;;
+*)
 
 
 (*** QUESTION 1: VALDIATOR ***)
@@ -70,5 +92,35 @@ let rec solve board n =
   raise NotImplemented
 
 
+
+
 (*** QUESTION 3: FASTER ALGORITHM (ninja level) ***)
 
+(* TODO: Implement create_sudoku_grid *)
+let create_sudoku_grid ctx m =
+  raise NotImplemented
+
+(* TODO: Implement add_digit_constraints *)
+let add_digit_constraints ctx m grid solver =
+  raise NotImplemented
+
+(* TODO: Implement add_distinct_row_constraint *)
+let add_distinct_row_constraint ctx m grid solver =
+  raise NotImplemented
+
+(* TODO: Implement add_distinct_col_constraint *)
+let add_distinct_col_constraint ctx m grid solver =
+  raise NotImplemented
+
+(* TODO: Implement add_distinct_square_constraint *)
+let add_distinct_square_constraint ctx m grid solver =
+  raise NotImplemented
+
+(* TODO: Implement add_instance_constraints *)
+let add_instance_constraints ctx grid solver instance = 
+  raise NotImplemented
+
+(* TODO: Implement solve_sudoku. You may find create_solver and print_solution useful *)
+let solve_sudoku ctx m instance =
+  raise NotImplemented
+  
