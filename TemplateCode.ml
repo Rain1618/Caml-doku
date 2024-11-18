@@ -64,7 +64,6 @@ let full_valid_board board n =
 
 
 
-
 (*** QUESTION 2: BRUTE FORCE SOLVER ***)
 
 (* TODO: Implement row_valid *)
@@ -93,8 +92,7 @@ let rec solve board n =
 
 
 
-
-(*** QUESTION 3: FASTER ALGORITHM (ninja level) ***)
+(*** QUESTION 3: CONSTRAINT PROBLEM (ninja level) ***)
 
 (* TODO: Implement create_sudoku_grid *)
 let create_sudoku_grid ctx m =
