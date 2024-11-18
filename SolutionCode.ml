@@ -4,9 +4,9 @@ type board = int array array
 
 (* FOR Q1 *)
 let is_valid_list arr n =
-  let arr_copy = Array.copy arr in  (* Create a copy of the array *)
-  Array.sort compare arr_copy;  (* Sort the copy in-place *)
-  arr_copy = Array.init (n * n) (fun i -> i + 1)  (* Compare sorted array with expected array *)
+  let arr_copy = Array.copy arr in 
+  Array.sort compare arr_copy;  (* sort copy in-place *)
+  arr_copy = Array.init (n * n) (fun i -> i + 1)  (* compare sorted array with what it should be *)
 
 (* FOR Q2 *)
 let print_board board =
@@ -19,12 +19,6 @@ let print_board board =
 
 
 (*** QUESTION 1: VALDIATOR ***)
-
-
-let is_valid_list arr n =
-  let arr_copy = Array.copy arr in  (* Create a copy of the array *)
-  Array.sort compare arr_copy;  (* Sort the copy in-place *)
-  arr_copy = Array.init (n * n) (fun i -> i + 1)  (* Compare sorted array with expected array *)
 
 (* grabs the rowth row from the board *)
 let get_row board row =
