@@ -1,88 +1,93 @@
-# open Printf
+(* !! n is the side length of the squares, 0 resemble empty cells *)
 
-  module Board = struct
-    type t = int array (* 9×9, row-major representation.  A value of 0
-                          means undecided. *)
 
-    let is_valid c = c >= 1
+type board = int array array
 
-    let get (b : t) (x, y) = b.(x + y * 9)
 
-    let get_as_string (b : t) pos =
-      let i = get b pos in
-      if is_valid i then string_of_int i else "."
+(* checks if value can legally be added to the row *)
+let row_valid board row value =
+ not (Array.exists ((=) value) board.(row))
 
-    let with_val (b : t) (x, y) v =
-      let b = Array.copy b in
-      b.(x + y * 9) <- v;
-      b
 
-    let of_list l : t =
-      let b = Array.make 81 0 in
-      List.iteri (fun y r -> List.iteri (fun x e ->
-        b.(x + y * 9) <- if e >= 0 && e <= 9 then e else 0) r) l;
-      b
+(* checks if value can legally be added to the column *)
+let col_valid board col value =
+ not (Array.exists (fun row -> row.(col) = value) board)
 
-    let print b =
-      for y = 0 to 8 do
-        for x = 0 to 8 do
-          printf (if x = 0 then "%s" else if x mod 3 = 0 then " | %s"
-                  else "  %s")  (get_as_string b (x, y))
-        done;
-        if y < 8 then
-          if y mod 3 = 2 then printf "\n--------+---------+--------\n"
-          else printf "\n        |         |        \n"
-        else printf "\n"
-      done
 
-    let available b (x, y) =
-      let avail = Array.make 10 true in
-      for i = 0 to 8 do
-        avail.(get b (x, i)) <- false;
-        avail.(get b (i, y)) <- false;
-      done;
-      let sq_x = x - x mod 3 and sq_y = y - y mod 3 in
-      for x = sq_x to sq_x + 2 do
-        for y = sq_y to sq_y + 2 do
-          avail.(get b (x, y)) <- false;
-        done;
-      done;
-      let av = ref [] in
-      for i = 1 (* not 0 *) to 9 do if avail.(i) then av := i :: !av done;
-      !av
+(* checks if value can legally be added to the square its in *)
+let square_valid board row col value n =
+ let start_row = (row / n) * n in
+ let start_col = (col / n) * n in
+ let rec check r c = match r, c with
+   | r, c when r = start_row + n -> true
+   | r, c when c = start_col + n -> check (r+1) start_col
+   | r, c when board.(r).(c) = value -> false
+   | r, c -> check r (c+1)
+ in
+ check start_row start_col
 
-    let next (x,y) = if x < 8 then (x + 1, y) else (0, y + 1)
 
-    (** Try to fill the undecided entries. *)
-    let rec fill b ((x, y) as pos) =
-      if y > 8 then Some b (* filled all entries *)
-      else if is_valid(get b pos) then fill b (next pos)
-      else match available b pos with
-           | [] -> None (* no solution *)
-           | l -> try_values b pos l
-    and try_values b pos = function
-      | v :: l ->
-         (match fill (with_val b pos v) (next pos) with
-          | Some _ as res -> res
-          | None -> try_values b pos l)
-      | [] -> None
-  end
+(* checks if the added value follows board rules *)
+let check_board_valid board row col value n =
+ row_valid board row value &&
+ col_valid board col value &&
+ square_valid board row col value n
 
-  let sudoku b = match Board.fill b (0, 0) with
-    | Some b -> b
-    | None -> failwith "sudoku: no solution";;
-module Board :
-  sig
-    type t = int array
-    val is_valid : int -> bool
-    val get : t -> int * int -> int
-    val get_as_string : t -> int * int -> string
-    val with_val : t -> int * int -> int -> int array
-    val of_list : int list list -> t
-    val print : t -> unit
-    val available : t -> int * int -> int list
-    val next : int * int -> int * int
-    val fill : t -> int * int -> t option
-    val try_values : t -> int * int -> int list -> t option
-  end
-val sudoku : Board.t -> Board.t = <fun>
+
+(* finds next empty cell *)
+let find_empty board n =
+ let rec search r c = match (r, c) with
+   | r,c when r = n*n -> None (* reached end of cols *)
+   | r,c when c = n*n -> search (r+1) 0 (* reached end of row, move to next *)
+   | r,c when board.(r).(c) = 0 -> Some (r, c) (* found empty *)
+   | r,c -> search r (c + 1) (* move to next cell *)
+ in
+ search 0 0
+
+
+(* checks if value can legally be added to the row *)
+let rec solve board n = match find_empty board n with
+ | None -> Some board  (* no empties, so board is solved *)
+ | Some (row, col) ->
+     let rec try_value value =
+       if value > n*n then None  (* no valid options, backtrack *)
+       else if check_board_valid board row col value n then (
+         board.(row).(col) <- value;
+         match solve board n with
+         | Some solution -> Some solution  (* solution found *)
+         | None ->
+             board.(row).(col) <- 0;  (* undo, try next value *)
+             try_value (value + 1)
+       ) else try_value (value + 1)
+     in try_value 1
+
+
+ (* prints board *)
+let print_board board =
+ Array.iter (fun row ->
+   Array.iter (fun cell ->
+     Printf.printf "%d " cell
+   ) row;
+   print_newline ()
+ ) board
+
+
+
+
+(* example with 9x9 board *)
+let () =
+let board = [|
+ [|5; 3; 0; 0; 7; 0; 0; 0; 0|];
+ [|6; 0; 0; 1; 9; 5; 0; 0; 0|];
+ [|0; 9; 8; 0; 0; 0; 0; 6; 0|];
+ [|8; 0; 0; 0; 6; 0; 0; 0; 3|];
+ [|4; 0; 0; 8; 0; 3; 0; 0; 1|];
+ [|7; 0; 0; 0; 2; 0; 0; 0; 6|];
+ [|0; 6; 0; 0; 0; 0; 2; 8; 0|];
+ [|0; 0; 0; 4; 1; 9; 0; 0; 5|];
+ [|0; 0; 0; 0; 8; 0; 0; 7; 9|];
+|] in
+let n = 3 in
+ match solve board n with
+ | Some solved_board -> print_board solved_board
+ | None -> Printf.printf "No solution exists\n"
